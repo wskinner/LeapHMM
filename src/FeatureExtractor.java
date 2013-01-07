@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import be.ac.ulg.montefiore.run.jahmm.ObservationVector;
+
 abstract class FeatureExtractor {
 	/*
 	 * Handle conversions between raw Leap data and jahmm.Observations.
@@ -40,6 +42,13 @@ abstract class FeatureExtractor {
 	 * Return the features constructed from the n oldest frames.
 	 */
 	public Object getFeatures(int n) {
+		return null;
+	}
+	
+	/*
+	 * Return the features constructed from all the frames.
+	 */
+	public ArrayList<ArrayList<ObservationVector>> getFeatures() {
 		return null;
 	}
 	

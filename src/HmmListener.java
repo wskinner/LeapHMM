@@ -1,8 +1,16 @@
+import java.util.ArrayList;
+
 class HmmListener extends Listener {
 	private FeatureExtractor extractor;
+	private int windowSize;
+	private ArrayList<Frame> frames;
+	private LeapHmm hmmController;
 	
-	public HmmListener (FeatureExtractor fe) {
-		this.extractor = fe;
+	public HmmListener (LeapHmm hmmController, int windowSize) {
+		this.extractor = hmmController.fe;
+		this.windowSize = windowSize;
+		this.frames = new ArrayList<Frame>();
+		this.hmmController = hmmController;
 	}
 	
 	public void onInit(Controller controller) {
@@ -21,5 +29,7 @@ class HmmListener extends Listener {
 	    // Get the most recent frame and report some basic information
 	    Frame frame = controller.frame();
 	    extractor.loadFrame(frame);
+	    hmmController.predict();
 	}
+	
 }

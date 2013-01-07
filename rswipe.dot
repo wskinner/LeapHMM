@@ -1,0 +1,25 @@
+digraph G {
+	0 -> 0 [label=0.88];
+	0 -> 2 [label=0.12];
+	1 -> 0 [label=0.12];
+	1 -> 1 [label=0.88];
+	2 -> 2 [label=0.88];
+	2 -> 5 [label=0.12];
+	3 -> 3 [label=0.89];
+	3 -> 6 [label=0.11];
+	4 -> 4 [label=1];
+	5 -> 3 [label=0.12];
+	5 -> 5 [label=0.88];
+	6 -> 4 [label=0.07];
+	6 -> 6 [label=0.89];
+	6 -> 7 [label=0.03];
+	7 -> 7 [label=1];
+	0 [shape=circle, label="0 - [ Multi-variate Gaussian distribution --- Mean: [ -163.011 222.151 16.335 ] ]"];
+	1 [shape=doublecircle, label="1 - Pi= 1 - [ Multi-variate Gaussian distribution --- Mean: [ -226.853 223.353 34.75 ] ]"];
+	2 [shape=circle, label="2 - [ Multi-variate Gaussian distribution --- Mean: [ -95.014 220.793 3.616 ] ]"];
+	3 [shape=circle, label="3 - [ Multi-variate Gaussian distribution --- Mean: [ 51.037 215.095 -19.483 ] ]"];
+	4 [shape=circle, label="4 - [ Multi-variate Gaussian distribution --- Mean: [ 212.526 196.145 -30.795 ] ]"];
+	5 [shape=circle, label="5 - [ Multi-variate Gaussian distribution --- Mean: [ -24.907 218.906 -10.725 ] ]"];
+	6 [shape=circle, label="6 - [ Multi-variate Gaussian distribution --- Mean: [ 127.483 209.221 -26.188 ] ]"];
+	7 [shape=circle, label="7 - [ Multi-variate Gaussian distribution --- Mean: [ 221.037 220.581 19.922 ] ]"];
+}
