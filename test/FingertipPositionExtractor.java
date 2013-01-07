@@ -32,28 +32,12 @@ public class FingertipPositionExtractor extends FeatureExtractor {
 	public ArrayList<ObservationVector> getRealtimeFeatures() {
 		ArrayList<ObservationVector> observedFeatures = new ArrayList<ObservationVector>();
 		for (Frame f : frameSequences) {
-			ObservationVector obV = makeFeatures(f);
-			if (obV != null) {
-				observedFeatures.add(obV);
-			}
+			observedFeatures.add(makeFeatures(f));
 		}
 		return observedFeatures;
 	}
 	
-	private boolean canMakeFeatures(Frame f) {
-		if (f.hands().isEmpty()) {
-			return false;
-		}
-		if (f.hands().get(0).fingers().isEmpty()) {
-			return false;
-		}
-		return true;
-	}
-	
 	private ObservationVector makeFeatures(Frame f) {
-		if (!canMakeFeatures(f)) {
-			return null;
-		}
 		double[] fingerPos = new double[dimension];
 		Vector fingerVect = f.hands().get(0).fingers().get(0).tip().getPosition();
 		fingerPos[0] = fingerVect.getX();
@@ -137,9 +121,6 @@ public class FingertipPositionExtractor extends FeatureExtractor {
 	 * method of a Leap Listener.
 	 */
 	public void loadFrame(Frame frame) {
-		if (frameSequences.size() == windowSize) {
-			frameSequences.remove(0);
-		}
 		frameSequences.add(frame);
 	}
 	
@@ -151,4 +132,5 @@ public class FingertipPositionExtractor extends FeatureExtractor {
 	public void emptyBuffer() {
 		frameSequences = new ArrayList<Frame>();
 	}
+	
 }

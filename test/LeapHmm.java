@@ -1,20 +1,15 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import be.ac.ulg.montefiore.run.jahmm.*;
 import be.ac.ulg.montefiore.run.jahmm.learn.*;
 import be.ac.ulg.montefiore.run.jahmm.draw.*;
-import be.ac.ulg.montefiore.run.jahmm.io.*;
 
 class LeapHmm {
 	public FeatureExtractor fe;
 	public Recognizer rec;
 	public ArrayList<ArrayList<ArrayList<ObservationVector>>> trainingSequences;
-	private boolean ready = false;
 	
 	static boolean debug;
 	static int nStates = 8;
@@ -24,41 +19,23 @@ class LeapHmm {
 	
 	
 	public static void main(String[] args) throws IOException {
-		/*
 		debug = false;
-		*/
 		LeapHmm testHmm = new LeapHmm();
 		testHmm.initialize(args);
 		test(args, testHmm);
 		//draw(args);
-		//listen(args, testHmm);
-		
 	}
-	
+
 	/*
 	 * Make a prediction based on the window of frames currently in 
 	 * my FeatureExtractor. 
 	 */
 	public void predict() {
-		ArrayList<? extends ObservationVector> seq = fe.getRealtimeFeatures();
-		if (seq.size() == 0) {
-			ready = true;
-			return;
-		}
-		String prediction = rec.predict(seq);
-		if (ready & prediction != null) {
+		String prediction = rec.predict(fe.getRealtimeFeatures());
+		if (prediction != null) {
 			System.out.println(prediction);
 			fe.emptyBuffer();
-			ready = false;
 		}
-		/*
-		for (int[] s : rec.getMaxLikelihoodStateSequences(seq)) {
-			for (int i : s) {
-				System.out.print(i);
-			}
-			System.out.println();
-		}
-		*/
 	}
 	
 	public static void listen(String[] gestureNames, LeapHmm hmm) {
@@ -102,25 +79,9 @@ class LeapHmm {
 		gestures[2].setFinalStates(circle_finals);
 		
 		rec = new Recognizer(gestures, 0.75);
-		fe = new FingertipPositionExtractor(1, windowSize);
 		trainingSequences = new ArrayList<ArrayList<ArrayList<ObservationVector>>>();
+		fe = new FingertipPositionExtractor(1, windowSize);
 		
-		for (String gName : gestureNames) {
-			fe.loadData(datapath + gName + "_train.csv");
-			trainingSequences.add(fe.getFeatures());
-		}
-		for (ArrayList<ArrayList<ObservationVector>> obs : trainingSequences) {
-			for (int i = 0; i<obs.size(); i++) {
-				ArrayList<ObservationVector> ges = obs.get(i);
-				try {
-					ges.get(0);
-				}
-				catch (Exception x) {
-					System.out.println(obs);
-				}
-			}
-		}	
-		rec.train(new int[0], trainingSequences);
 	}
 
 	/*
@@ -164,8 +125,6 @@ class LeapHmm {
 							   " out of " + obsLength + " observations.");
 		}
 	}
-
-	
 }
 class Gesture {
 	/*
@@ -183,7 +142,7 @@ class Gesture {
 	
 	public Gesture(String name, int nStates, int dimension, int[] finalStates) {
 		this.debug = true;
-		this.setModel(new Hmm<ObservationVector>(nStates, new OpdfMultiGaussianFactory(dimension)));
+		this.model = new Hmm<ObservationVector>(nStates, new OpdfMultiGaussianFactory(dimension));
 		this.learner = new BaumWelchScaledLearner();
 		this.name = name;
 		this.nStates = nStates;
@@ -207,7 +166,7 @@ class Gesture {
 		KMeansLearner <ObservationVector> kml = new KMeansLearner <ObservationVector>(nStates, 
 																					  new OpdfMultiGaussianFactory(dimension), 
 																					  sequences); 
-		setModel(learner.learn(kml.iterate(), sequences));
+		model = learner.learn(kml.iterate(), sequences);
 	}
 	
 	/*
@@ -215,14 +174,14 @@ class Gesture {
 	 * of observations.
 	 */
 	public int[] predict(List<? extends ObservationVector> sequence) {
-		return getModel().mostLikelyStateSequence(sequence);
+		return model.mostLikelyStateSequence(sequence);
 	}
 	
 	/*
 	 * Return the probability of the given observation sequence given the HMM.
 	 */
 	public double prob(List<? extends ObservationVector> sequence) {
-		return getModel().probability(sequence);
+		return model.probability(sequence);
 	}
 
 	public String getName() {
@@ -230,7 +189,7 @@ class Gesture {
 	}
 
 	public void draw() throws IOException {
-		(new GenericHmmDrawerDot()).write(getModel(), name+".dot");
+		(new GenericHmmDrawerDot()).write(model, name+".dot");
 	}
 
 	public boolean matched(List<? extends ObservationVector> sequence) {
@@ -242,14 +201,6 @@ class Gesture {
 			}
 		}
 		return false;
-	}
-
-	public Hmm<ObservationVector> getModel() {
-		return model;
-	}
-
-	public void setModel(Hmm<ObservationVector> model) {
-		this.model = model;
 	}
 }
 
@@ -300,7 +251,7 @@ class Recognizer {
 		return gProbs;
 	}
 	
-	public ArrayList<int[]> getMaxLikelihoodStateSequences(ArrayList<? extends ObservationVector> sequence) {
+	private ArrayList<int[]> getMaxLikelihoodStateSequences(ArrayList<? extends ObservationVector> sequence) {
 		ArrayList<int[]> seqs = new ArrayList<int[]>();
 		for (int i = 0; i<gestures.length; i++) {
 			seqs.add(gestures[i].predict(sequence));
@@ -367,17 +318,4 @@ class Recognizer {
 			g.draw();
 		}
 	}
-
-	/*
-	public void write() {
-		try {
-			for (Gesture g : gestures) {
-				FileWriter fw = new FileWriter(g.getName() + ".hmm");
-				OpdfWriter<OpdfMultiGaussian> omgw = new OpdfMultiGaussianWriter();
-				HmmWriter hmmw = new HmmWriter(fw, omgw, g.getModel());
-			}
-			
-		}
-	}
-	*/
 }

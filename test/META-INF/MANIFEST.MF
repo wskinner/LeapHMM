@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Rsrc-Class-Path: ./ jahmm-0.6.1.jar LeapJava.jar
+Class-Path: .
+Rsrc-Main-Class: LeapHmm
+Main-Class: org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader
+
