@@ -12,7 +12,8 @@ import be.ac.ulg.montefiore.run.jahmm.io.*;
 
 class LeapHmm {
 	public FeatureExtractor fe;
-	public Recognizer rec;
+	//public Recognizer rec;
+	public SingleHmmRecognizer rec;
 	public ArrayList<ArrayList<ArrayList<ObservationVector>>> trainingSequences;
 	private boolean ready = false;
 	
@@ -27,11 +28,15 @@ class LeapHmm {
 		/*
 		debug = false;
 		*/
+		/*
 		LeapHmm testHmm = new LeapHmm();
 		testHmm.initialize(args);
 		test(args, testHmm);
+		*/
 		//draw(args);
 		//listen(args, testHmm);
+		
+		LeapHmm testHmm = new LeapHmm();
 		
 	}
 	
@@ -368,7 +373,6 @@ class Recognizer {
 		}
 	}
 
-	/*
 	public void write() {
 		try {
 			for (Gesture g : gestures) {
@@ -376,8 +380,10 @@ class Recognizer {
 				OpdfWriter<OpdfMultiGaussian> omgw = new OpdfMultiGaussianWriter();
 				HmmWriter hmmw = new HmmWriter(fw, omgw, g.getModel());
 			}
+		catch (Exception e) {
+				
+			}
 			
 		}
 	}
-	*/
 }

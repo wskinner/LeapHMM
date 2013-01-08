@@ -6,7 +6,7 @@ class HmmListener extends Listener {
 	private ArrayList<Frame> frames;
 	private LeapHmm hmmController;
 	
-	public HmmListener (LeapHmm hmmController) {
+	public HmmListener (LeapHmmSingle hmmController) {
 		this.extractor = hmmController.fe;
 		this.frames = new ArrayList<Frame>();
 		this.hmmController = hmmController;
