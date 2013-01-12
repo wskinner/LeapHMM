@@ -3,6 +3,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import be.ac.ulg.montefiore.run.jahmm.ObservationVector;
 
@@ -16,12 +18,14 @@ public class FingertipPositionExtractor extends FeatureExtractor {
 	private int nFingers;
 	private int windowSize;
 	
-	public FingertipPositionExtractor(int nFingers, int windowSize) {
+	public FingertipPositionExtractor(int nFingers, int windowSize, int minSequenceLength) {
 		this.featureSequences = new ArrayList<ArrayList<ArrayList<Double>>>();
 		this.frameSequences = new ArrayList<Frame>();
 		this.dimension = 3;
 		this.nFingers = nFingers;
 		this.windowSize = windowSize;
+		this.ready = false;
+		this.minSequenceLength = minSequenceLength;
 	}
 	
 	/*
@@ -37,6 +41,7 @@ public class FingertipPositionExtractor extends FeatureExtractor {
 				observedFeatures.add(obV);
 			}
 		}
+		ready = false;
 		return observedFeatures;
 	}
 	
@@ -137,10 +142,17 @@ public class FingertipPositionExtractor extends FeatureExtractor {
 	 * method of a Leap Listener.
 	 */
 	public void loadFrame(Frame frame) {
-		if (frameSequences.size() == windowSize) {
-			frameSequences.remove(0);
+		if (canMakeFeatures(frame)) {
+			if (frameSequences.size() == windowSize) {
+				frameSequences.remove(0);
+			}
+			frameSequences.add(frame);
+			//System.out.println("Added frame. Currently there are " + frameSequences.size() + " frames out of a maximum " + minSequenceLength + " allowed.");
 		}
-		frameSequences.add(frame);
+		else if (frameSequences.size() >= minSequenceLength) {
+			ready = true;
+			//System.out.println("Frames ready. " + frameSequences.size() + " frames");
+		}
 	}
 	
 	/*

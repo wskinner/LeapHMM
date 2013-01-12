@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.TimerTask;
 
 import be.ac.ulg.montefiore.run.jahmm.ObservationVector;
 
@@ -12,6 +13,8 @@ abstract class FeatureExtractor {
 	protected ArrayList<ArrayList<ArrayList<Double>>> featureSequences;
 	protected ArrayList<Frame> frameSequences;
 	protected int dimension;
+	public boolean ready;
+	public int minSequenceLength;
 	
 	public FeatureExtractor() {
 		
@@ -67,6 +70,4 @@ abstract class FeatureExtractor {
 	public void emptyBuffer() {
 		
 	}
-	
-	
 }
