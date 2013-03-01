@@ -3,6 +3,7 @@ parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0,parentdir) 
 from leap.lib import Leap 
 from python_src.features import dumpFeaturesCSV as dumpFeatures
+from python_src.features import dumpFrames
 
 
 class Listener(Leap.Listener): 
@@ -67,7 +68,8 @@ if __name__ == '__main__':
             pass
             print "[Command] ", 
         elif command[0] == "q": 
-            dumpFeatures(gesture_list, gesture_name)
+            #dumpFeatures(gesture_list, gesture_name)
+            dumpFrames(gesture_list, gesture_name)
             print "Goodbye"
             break
         elif "load" in command: 

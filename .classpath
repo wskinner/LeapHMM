@@ -8,5 +8,7 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/Users/willskinner/leap/lib"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Library/Java/google-gson-2.2.2/gson-2.2.2.jar"/>
+	<classpathentry kind="lib" path="/Library/Java/json-simple-1.1.1.jar" sourcepath="/Library/Java/json-simple"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

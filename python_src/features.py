@@ -7,6 +7,55 @@ import utils
 import pickle
 import time
 import csv
+import json
+
+def getFrameInfo(frame):
+    frame_info = {'hands': []}
+    for hand in frame.hands():
+        finger_list = []
+        for finger in hand.fingers():
+            finger_dict = {}
+            v = finger.velocity()
+            vector = Leap.Vector(v.x,v.y,v.z)
+            velocities = {}
+            velocities['x_norm'] = v.x/utils.norm(vector)
+            velocities['y_norm'] = v.y/utils.norm(vector)
+            velocities['z_norm'] = v.z/utils.norm(vector)
+            velocities['x'] = vector.x
+            velocities['y'] = vector.y
+            velocities['z'] = vector.z
+            finger_dict['velocities'] = velocities
+            finger_dict['position'] = (finger.tip().position.x,
+                                       finger.tip().position.y,
+                                       finger.tip().position.z)
+            finger_list.append(finger_dict)
+        frame_info['hands'].append(finger_list)
+    return frame_info
+
+def dumpFrames(gesture_list, gesture_name):
+    """
+    Write useful frame info to json.
+    The gesture list is written to a JSON object that looks like this:
+    {'gestures': [
+    {'hands': 
+    [[{'velocities': {'x_norm': double, 'y_norm': double, 'z_norm': double,
+                      'x': double, 'y': double, 'z': double}
+       'position': [double, double, double]}],
+       ...
+       ]
+    }]
+    }
+    """
+    frames_dict = {'gestures': []}
+    for gesture in gesture_list:
+        gesture_features = []
+        for frame in gesture:
+            gesture_features.append(getFrameInfo(frame))
+        frames_dict['gestures'].append(gesture_features)
+    with open(gesture_name+'.json', 'w') as f:
+        print frames_dict
+        json.dump(frames_dict, f)
+
 
 def loadFeatures(gesture_name):
     i = 0

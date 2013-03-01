@@ -1,0 +1,7 @@
+*.class
+*.jar
+*.dot
+*.txt
+*.dylib
+*.pyc
+build/
